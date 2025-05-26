@@ -1,0 +1,31 @@
+# .github/workflows/main.yml
+
+name: Docker Build and Test
+
+on:
+  push:
+    branches:
+      - main # Trigger on pushes to the main branch
+  pull_request:
+    branches:
+      - main # Trigger on pull requests targeting the main branch
+
+jobs:
+  build-and-test:
+    # Use the latest Ubuntu runner, which comes with Docker pre-installed
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      # This action checks out your repository code into the runner environment
+      uses: actions/checkout@v4
+
+    - name: Build Docker image
+      # This step builds the Docker image using your Dockerfile.dev
+      # The image is tagged as 'shubhamhirpara/docker-react'
+      run: docker build -t shubhamhirpara/docker-react -f Dockerfile.dev .
+
+    - name: Run Docker container and tests
+      # This step runs the Docker container, setting the CI environment variable to true
+      # It then executes 'npm run test' inside the container
+      run: docker run -e CI=true shubhamhirpara/docker-react npm run test
